@@ -8,13 +8,13 @@ async function createChat(req, res) {
 try {
     const { userId } = req.body || {};
     if (!userId) {
-        return res.status(400).json({ msg: 'userId is required' });
+        return res.status(400).json({ msg: 'userId and currentUserId are required' });
     }
 
     // find existing one-to-one chat between the two users
     const existingChat = await Chat.findOne({
         isGroupChat: false,
-        participants: { $all: [req.user._id, userId], $size: 2 }
+        participants: { $all: [ userId], $size: 2 }
     }).populate('participants', '-password').populate('lastMessage');
 
     if (existingChat) {
@@ -22,7 +22,7 @@ try {
     }
 
     const newChat = new Chat({
-        participants: [req.user._id, userId],
+        participants: [ userId],
         isGroupChat: false
     });
     await newChat.save();

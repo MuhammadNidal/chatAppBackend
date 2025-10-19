@@ -71,54 +71,38 @@ async function getAllMessages(req, res) {
 }
 
 
-    async function addSendMessage(req, res) {
-        try {
-            const { chatId, content, } = req.body || {};
-            if (!chatId || !content) {
-                return res.status(400).json({ msg: 'chatId and content are required' });
-            }
-
-            async function getAllMessages(req, res) {
-                try {
-                    const page = parseInt(req.query.page) || 1;
-                    const limit = parseInt(req.query.limit) || 50;
-                    const skip = (page - 1) * limit;
-                    const messages = await Message.find({})
-                        .sort({ createdAt: -1 })
-                        .skip(skip)
-                        .limit(limit)
-                        .populate('sender', '-password')
-                        .populate('chat');
-                    return res.json(messages.reverse());
-                } catch (err) {
-                    console.error('getAllMessages error:', err);
-                    return res.status(500).json({ msg: 'Server error' });
-                }
-            }
-            const chat = await Chat.findOne({
-                _id: chatId,
-                participants: { $in: [req.user._id] }
-            });
-            if (!chat) {
-                return res.status(404).json({ msg: 'Chat not found or access denied' });
-            }
-            const newMessage = new Message({
-                sender: req.user._id,
-                content,
-                chat: chatId,
-                messageType: req.body.messageType || 'text'
-            });
-            await newMessage.save();
-            await newMessage.populate('sender', '-password');
-
-            chat.lastMessage = newMessage._id;
-            await chat.save();
-             return res.status(201).json(newMessage);
-        } catch (error) {
-            console.error('addSendMessage error:', error);
-            return res.status(500).json({ msg: 'Server error' });
+async function addSendMessage(req, res) {
+    try {
+        const { chatId, content } = req.body || {};
+        if (!chatId || !content) {
+            return res.status(400).json({ msg: 'chatId and content are required' });
         }
+
+        const chat = await Chat.findOne({
+            _id: chatId,
+            participants: { $in: [req.user._id] }
+        });
+        if (!chat) {
+            return res.status(404).json({ msg: 'Chat not found or access denied' });
+        }
+        
+        const newMessage = new Message({
+            sender: req.user._id,
+            content,
+            chat: chatId,
+            messageType: req.body.messageType || 'text'
+        });
+        await newMessage.save();
+        await newMessage.populate('sender', '-password');
+
+        chat.lastMessage = newMessage._id;
+        await chat.save();
+        return res.status(201).json(newMessage);
+    } catch (error) {
+        console.error('addSendMessage error:', error);
+        return res.status(500).json({ msg: 'Server error' });
     }
+}
 
 module.exports = {
     getMessagesByChatId,
