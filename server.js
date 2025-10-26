@@ -10,12 +10,14 @@ const { initializeSocket } = require('./socket/socket');
 
 // Connect to MongoDB
 PORT=3000
-mongoose.connect(process.env.MONGODB_URIs,  {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log('MongoDB connected'))
-.catch((err) => console.error('MongoDB connection error:', err));
+if (!mongoose.connection.readyState) {
+  mongoose.connect(process.env.MONGODB_URIs, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log('MongoDB connected'))
+  .catch((err) => console.error('MongoDB connection error:', err));
+}
 
 // Simple request logger
 app.use((req, res, next) => {
