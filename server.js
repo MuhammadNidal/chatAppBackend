@@ -9,7 +9,8 @@ const mongoose = require('mongoose');
 const { initializeSocket } = require('./socket/socket');
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URIs, {
+PORT=3000
+mongoose.connect(process.env.MONGODB_URIs,  {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
@@ -36,3 +37,8 @@ app.use('/api/chats', chats);
 app.use('/api/messages', messages);
 
 module.exports = app; // ✅ export instead of app.listen
+
+
+// app.listen(PORT, () => {
+//   console.log(`Server is running on http://localhost:${PORT}`);
+// });
