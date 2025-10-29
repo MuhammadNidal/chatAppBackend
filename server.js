@@ -9,9 +9,13 @@ const mongoose = require('mongoose');
 const { initializeSocket } = require('./socket/socket');
 
 // Connect to MongoDB
-PORT=3000
-if (!mongoose.connection.readyState) {
-  mongoose.connect(process.env.MONGODB_URIs, {
+const PORT = process.env.PORT || 3000;
+// accept several common environment variable names for compatibility
+const mongoUri = process.env.MONGODB_URI || process.env.MONGODB_URIs || process.env.MONGO_URL;
+if (!mongoUri) {
+  console.error('MongoDB connection error: no MongoDB URI provided. Set MONGODB_URI in environment.');
+} else if (!mongoose.connection.readyState) {
+  mongoose.connect(mongoUri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
