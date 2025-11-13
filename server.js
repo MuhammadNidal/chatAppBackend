@@ -46,7 +46,7 @@ module.exports = app; // ✅ export the app for serverless (Vercel) or tests
 
 // Start the HTTP server only when this file is run directly (e.g. in Docker or local)
 // if (require.main === module) {
-  // app.listen(PORT, () => {
-  //   console.log(`Server is running on http://localhost:${PORT}`);
-  // });
+  app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+  });
 // }
