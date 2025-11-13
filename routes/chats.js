@@ -4,8 +4,8 @@ const chatController = require('../controller/chat.controller');
 
 
 router.post('/create', chatController.createChat);
-router.get('/:userId',  chatController.getUserChatsById);
-router.get('/allChats',  chatController.getAllChats);
+router.get('/allChats', chatController.getAllChats);
+router.get('/:userId', chatController.getUserChatsById);
 // router.post('/personal', chatController.getOrCreatePersonalChat);
 router.post('/group', chatController.createGroupChat);
 

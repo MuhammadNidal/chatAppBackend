@@ -73,21 +73,21 @@ async function getAllMessages(req, res) {
 
 async function addSendMessage(req, res) {
     try {
-        const { chatId, content } = req.body || {};
-        if (!chatId || !content) {
-            return res.status(400).json({ msg: 'chatId and content are required' });
+        const { chatId, content, senderId } = req.body || {};
+        if (!chatId || !content || !senderId) {
+            return res.status(400).json({ msg: 'chatId, content and senderId are required' });
         }
 
         const chat = await Chat.findOne({
             _id: chatId,
-            participants: { $in: [req.user._id] }
+            participants: { $in: [senderId] }
         });
         if (!chat) {
             return res.status(404).json({ msg: 'Chat not found or access denied' });
         }
         
         const newMessage = new Message({
-            sender: req.user._id,
+            sender: senderId,
             content,
             chat: chatId,
             messageType: req.body.messageType || 'text'

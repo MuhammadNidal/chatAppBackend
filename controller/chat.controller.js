@@ -37,8 +37,9 @@ try {
 
 async function getUserChatsById(req, res) {
     try {
+        const { userId } = req.params;
         const chats = await Chat.find({
-                participants: req.user._id
+                participants: userId
             })
             .populate('participants', '-password').populate('lastMessage')
         .sort({ updatedAt: -1 });
